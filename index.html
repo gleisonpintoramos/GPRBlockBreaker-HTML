@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPRBlockBreacker</title>
+</head>
+
+<style>
+    html{
+      height: 480px;
+      height: 854px;
+      background-color:black;
+    }
+    body {
+      align-items: normal;
+      background-color: rgb(0, 0, 0);
+      margin: 0;
+      padding: 0;
+      width: 480px;
+      height: 854px;
+      left: 0px;
+    }
+
+    #img_fundo{
+      position: absolute;
+      width: 480px;
+      height: 854px;
+    }
+
+    #img_jogador{
+      position: absolute;
+      width: 100px;
+      height: 25px;
+      left: 190px;
+      top: 680px;
+    }
+
+    #bt_base{
+      position: absolute;
+      cursor: pointer;
+      width: 480px;
+      height: 154px;
+      left: 5px;
+      top: 700px;
+    }
+
+    #bt_esquerda{
+      position: absolute;
+      cursor: pointer;
+      width: 100px;
+      height: 100px;
+      left: 5px;
+      top: 730px;
+    }
+
+    #bt_direita{
+      position: absolute;
+      cursor: pointer;
+      width: 100px;
+      height: 100px;
+      left: 380px;
+      top: 730px;
+    }
+    
+    
+    #bt_iniciar{
+      position: absolute;
+      width: 250px;
+      height: 60px;
+      left: 120px;
+      top: 450px;
+    }
+
+    #div_placar{
+      -webkit-text-stroke-width: 2px;
+      -webkit-text-stroke-color: black;
+      box-shadow: 0 0 15 yellow;
+      position: absolute;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+      color: yellow;
+      font-size: 40px;
+      margin:0;
+      top: 110px;
+      left: 125px;
+    }
+
+    #div_vidas{
+      -webkit-text-stroke-width: 2px;
+      -webkit-text-stroke-color: black;
+      box-shadow: 0 0 15 yellow;
+      position: absolute;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+      color: yellow;
+      font-size: 40px;
+      margin:0;
+      top: 110px;
+      left: 405px;
+    }
+
+    #img_bola{
+      position: absolute;
+      left: 220px;
+      top: 400px;
+    }
+
+    #tabela{
+      position: absolute;
+      width: 448px;
+      height: 120px;
+      color:white;
+      background-color: rgb(0, 0, 128);
+      border: 5px;
+      border-color: white;
+      left: 16px;
+      top:  170px;
+    }
+    #tabela td {
+       /* Estilos das células */
+       border: 1px solid #ddd;
+       padding: 0px;
+    }
+
+    #div_zoom{
+      border: 1px white;
+      position: absolute;
+      width: 200px;
+      height: 80px;
+      left: 160px;
+      top: 740px
+    }
+    #bt_mais{
+      width: 80px;
+      height: 80px;
+    }
+    #bt_menos{
+      width: 80px;
+      height: 80px;
+    }
+</style>
+
+<body>
+    <img id="img_fundo" src="Imagens/Fundo.png" alt="">
+    <img id="img_jogador" src="Imagens/jogador.png" alt="">
+    <img id="bt_base" draggable="false" src="Imagens/base.png" alt="">
+   
+    <img id="bt_iniciar" src="Imagens/bt_iniciar.png" alt="">
+ 
+    <div id="div_placar"> <b>0</b> </div>
+    <div id="div_vidas"> <b>3</b> </div>
+
+    <table id="tabela"> 
+      <tr> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td></tr>
+      <tr> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td></tr>
+      <tr> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td></tr>
+      <tr> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td></tr>
+      <tr> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td></tr>
+  </body>
+
+  <table id="img_bola" > <td><img src="Imagens/bola.png" alt=""></td></table>
+  <img  id="bt_esquerda" src="Imagens/bt_esquerda.png">
+  <img  id="bt_direita" src="Imagens/bt_direita.png"> 
+  <div id="div_zoom"> 
+       <img  id="bt_mais" src="Imagens/zoom_mais.png">
+       <img  id="bt_menos" src="Imagens/zoom_menos.png">
+  </div>
+
+</body>
+
+<script>
+    var status = "pausado"; // STATUS DO JOGO
+    var jogador = document.getElementById('img_jogador'); // VARIÁVEL QUE CONTEM O JOGADOR
+    var x_jogador = 200; // ´POSIÇÃO INICIAL DO JOGADOR
+    var x_bola = 220; // COORDENADA X DA BOLA
+    var y_bola = 400; // COORDENADA Y DA BOLA
+    var vx_bola = 0; // VELOCIDADE X DA BOLA
+    var vy_bola = 5; // VELOCIDADE Y DA BOLA
+    var bola = document.getElementById("img_bola"); 
+    var vidas = 3;
+    var div_vidas = document.getElementById("div_vidas");
+    var placar = 0;
+    var div_placar = document.getElementById("div_placar");
+    var tabela = document.getElementById("tabela"); // CONTÉM OS BLOCOS
+    var n_blocos = 80; // NÚMERO DE BLOCOS ATIVOS
+    var blocos = []; // ARRAY DOS BLOCOS 
+    var zoom = 1.0;
+   
+     // INICIALIZA A TABELA
+    function InicializaTabela(){
+      for (let y = 0; y < 5; y++){
+        for (let x = 0; x < 16; x++){
+          let cores = ["rgb(153,0,0)", "rgb(0,128,0)", "rgb(0,0,128)", "rgb(255,255,0)", "rgb(128,128,128)"]
+          tabela.rows[y].cells[x].style.backgroundColor = cores[y];
+        }
+      }
+    }  
+
+    // ALTERAR O ZOOM DA PAGINA
+    var btMais = document.getElementById('bt_mais');
+    btMais.addEventListener('click', () => {
+      zoom += 0.05;
+      document.body.style.zoom = zoom;
+    })
+    var btMenos = document.getElementById('bt_menos');
+    btMenos.addEventListener('click', () => {
+      zoom -= 0.05;
+      document.body.style.zoom = zoom;
+    })
+
+    // INICIANDO O JOGO
+    var btIniciar = document.getElementById('bt_iniciar');
+    btIniciar.addEventListener('click', () => {
+      status = "jogando";
+      btIniciar.style.display = "none";
+      document.getElementById('div_zoom').style.display = "none";
+      placar = 0;
+      div_placar.innerHTML = "<b>"+placar+"</b>";
+      vidas = 3;
+      div_vidas.innerHTML = "<b>"+vidas+"</b>";
+      InicializaTabela();
+      n_blocos = 80;
+      x_bola = 220; 
+      y_bola = 400; 
+      blocos[0] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+      blocos[1] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+      blocos[2] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+      blocos[3] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+      blocos[4] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+      blocos[5] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+
+      for (let y = 0;y < 5;y++){
+        for (let x = 0;x < 16;x++){
+          tabela.rows[y].cells[x].style.visibility = "visible";
+        }
+      }
+     });
+
+    // MOVENDO PRATO PARA A ESQUERDA 
+    var btEsquerda = document.getElementById('bt_esquerda');
+    btEsquerda.addEventListener('click',()=>{
+      x_jogador -= 20;
+      if (x_jogador < 0) {x_jogador = 0};
+      jogador.style.left = x_jogador+"px"; 
+    });  
+
+    // MOVENDO PRATO PARA A DIREITA 
+    var btDireita = document.getElementById('bt_direita');
+    btDireita.addEventListener('click',()=>{
+      x_jogador += 20;
+      if (x_jogador > 380) {x_jogador = 380};
+      jogador.style.left = x_jogador+"px"; 
+    });  
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowLeft") {
+        x_jogador -= 20;
+        if (x_jogador < 0) {x_jogador = 0};
+        jogador.style.left = x_jogador+"px"; 
+      } else if (event.key === "ArrowRight") {
+        x_jogador += 20;
+        if (x_jogador > 380) {x_jogador = 380};
+        jogador.style.left = x_jogador+"px"; 
+      }
+   });
+
+
+    // VERIFICANDO COLISÃO COM O PRATO
+    function ColisaoPrato(){
+       if (y_bola > 660  && y_bola < 700){
+          if (x_bola >= x_jogador && x_bola < x_jogador+100) {
+            vy_bola = -vy_bola; 
+            vx_bola = Math.floor((x_bola - (x_jogador+50))/10);
+            y_bola = 660;
+          } 
+        }
+    }
+
+    // VERICA COLISÃO COM OS BLOCOS
+    function ColisaoBlocos(){
+       if (y_bola < 290) {
+          let ax = Math.floor(((x_bola+10)-16)/28);
+          let ay = Math.floor(((y_bola+10)-170)/24);
+
+          if (ax >= 0 && ay >= 0 && blocos[ay][ax] != 0){
+             blocos[ay][ax] = 0;
+             tabela.rows[ay].cells[ax].style.visibility = "hidden";
+             placar += (5-ay)*10;
+             div_placar.innerHTML = "<b>"+placar+"</b>";
+             vy_bola = -vy_bola
+             n_blocos--;
+             // VERIFICA SE TODOS OS BLOCOS SUMIRAM E REINICIA
+             if (n_blocos == 0){
+                blocos[0] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+                blocos[1] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+                blocos[2] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+                blocos[3] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+                blocos[4] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+                blocos[5] = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+
+                for (let y = 0;y < 5;y++){
+                  for (let x = 0;x < 16;x++){
+                     tabela.rows[y].cells[x].style.visibility = "visible";
+                   }                             
+                }
+                n_blocos = 80;
+                // GANHA UMA VIDA
+                vidas += 1;
+                div_vidas.innerHTML = "<b>"+vidas+"</b>";
+                if (vy_bola > 0) {vy+bola++} else vy_bola--;
+                y_bola = 400;
+               }
+            }
+      }
+    }
+
+    setInterval(Jogar,30); // MOVE A BOLINHA A CADA SEGUNDO;
+    function Jogar(){ 
+      if (status == "jogando"){
+        // VERIFICANDO COLISÕES
+        ColisaoPrato();
+        ColisaoBlocos();
+
+        // COLISÃO COM A BORTA SUPERIOR
+        if (y_bola < 155) vy_bola = -vy_bola;
+        // COLISÃO COM OS LADOS
+        if (x_bola > 440 || x_bola < 10) vx_bola = -vx_bola;
+       
+        x_bola += vx_bola;
+        y_bola += vy_bola;
+
+        // PERDE VIDA
+        if (y_bola > 680) {
+          vidas -= 1;
+          
+          vx_bola = 0;
+          div_vidas.innerHTML = "<b>"+vidas+"</b>";
+          x_bola = 220;
+          y_bola = 400;
+          
+          if (vidas == 0){
+            status = "perdeu"; 
+            btIniciar.style.display = "block";
+            document.getElementById('div_zoom').style.display = "block";
+          }
+        }
+
+
+        bola.style.left = x_bola+"px";
+        bola.style.top = y_bola + "px";
+      }
+    }
+
+    
+</script>
+</html>
